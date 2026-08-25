@@ -1,0 +1,79 @@
+:root {
+  --marron-oscuro: #3a2418;
+  --marron-medio: #6f4e37;
+  --crema: #f5ede1;
+  --canela: #c48f5f;
+  --texto: #2b1d14;
+  --fuente-titulo: Georgia, 'Times New Roman', serif;
+  --fuente-texto: 'Segoe UI', Tahoma, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--crema);
+  color: var(--texto);
+  font-family: var(--fuente-texto);
+  line-height: 1.6;
+  text-align: center;
+  padding-bottom: 2rem;
+}
+
+h1 {
+  font-family: var(--fuente-titulo);
+  color: var(--marron-oscuro);
+  font-size: 3rem;
+  margin: 1.5rem 1rem 1rem;
+}
+
+img {
+  max-width: 700px;
+  width: 90%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(58, 36, 24, 0.25);
+  margin: 0.5rem auto;
+}
+
+p {
+  font-family: var(--fuente-texto);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 1.2rem auto;
+  padding: 0 1rem;
+  color: var(--marron-medio);
+}
+
+ul {
+  font-family: var(--fuente-texto);
+  font-size: 1.1rem;
+  margin: 1.5rem auto 0;
+  padding: 0;
+  text-align: left;
+  max-width: 26em;
+  list-style: none;
+}
+
+ul li {
+  background-color: #ffffff;
+  border: 1px solid #e4d5c1;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 4px 10px rgba(58, 36, 24, 0.08);
+}
+
+ul li a {
+  display: block;
+  padding: 0.9rem 1.2rem;
+  color: var(--marron-medio);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+ul li a:hover {
+  background-color: var(--crema);
+  border-radius: 8px;
+}
