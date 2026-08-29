@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actividad 3 · Animación básica</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+  <a href="index.html" class="volver">← Volver a la actividad 3</a>
+
+  <header class="cabecera">
+    <h1>Animación básica</h1>
+    <h2>Un cuadro que rebota usando requestAnimationFrame</h2>
+  </header>
+
+  <main class="contenido">
+    <canvas id="lienzo" width="600" height="400"></canvas>
+    <p>
+      El cuadro se mueve solo, cambia de color cada vez que rebota contra
+      un borde, y deja un rastro suave gracias a que el fondo no se borra
+      por completo en cada cuadro de animación.
+    </p>
+    <button id="botonPausa">Pausar</button>
+  </main>
+
+  <script>
+    const canvas = document.getElementById('lienzo');
+    const ctx = canvas.getContext('2d');
+    const boton = document.getElementById('botonPausa');
+
+    const colores = ['#3a2418', '#6f4e37', '#a3603a', '#c48f5f'];
+
+    const cuadro = {
+      x: 50,
+      y: 50,
+      tamano: 40,
+      velocidadX: 3,
+      velocidadY: 2.4,
+      color: colores[0]
+    };
+
+    let animando = true;
+
+    function actualizar() {
+      cuadro.x += cuadro.velocidadX;
+      cuadro.y += cuadro.velocidadY;
+
+      const chocaBordeX = cuadro.x <= 0 || cuadro.x + cuadro.tamano >= canvas.width;
+      const chocaBordeY = cuadro.y <= 0 || cuadro.y + cuadro.tamano >= canvas.height;
+
+      if (chocaBordeX) {
+        cuadro.velocidadX *= -1;
+        cuadro.color = colores[Math.floor(Math.random() * colores.length)];
+      }
+      if (chocaBordeY) {
+        cuadro.velocidadY *= -1;
+        cuadro.color = colores[Math.floor(Math.random() * colores.length)];
+      }
+    }
+
+    function dibujar() {
+      // Fondo semitransparente para dejar un rastro suave
+      ctx.fillStyle = 'rgba(245, 237, 225, 0.25)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = cuadro.color;
+      ctx.fillRect(cuadro.x, cuadro.y, cuadro.tamano, cuadro.tamano);
+    }
+
+    function bucle() {
+      if (animando) {
+        actualizar();
+        dibujar();
+      }
+      requestAnimationFrame(bucle);
+    }
+
+    // Fondo inicial sólido
+    ctx.fillStyle = '#f5ede1';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    bucle();
+
+    boton.addEventListener('click', () => {
+      animando = !animando;
+      boton.textContent = animando ? 'Pausar' : 'Reanudar';
+    });
+  </script>
+
+  <footer class="pie">
+    <p>Actividad 3 · Animación básica con canvas.</p>
+  </footer>
+
+</body>
+</html>

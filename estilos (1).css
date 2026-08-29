@@ -1,0 +1,110 @@
+/* ---------- Variables de diseño ---------- */
+:root {
+  --marron-oscuro: #3a2418;
+  --marron-medio: #6f4e37;
+  --crema: #f5ede1;
+  --canela: #c48f5f;
+  --texto: #2b1d14;
+  --fuente-titulo: Georgia, 'Times New Roman', serif;
+  --fuente-texto: 'Segoe UI', Tahoma, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--crema);
+  color: var(--texto);
+  font-family: var(--fuente-texto);
+  line-height: 1.6;
+}
+
+/* ---------- Link para volver al menú ---------- */
+.volver {
+  display: inline-block;
+  margin: 1rem 1.5rem 0;
+  color: var(--marron-medio);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.volver:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Cabecera ---------- */
+.cabecera {
+  background-color: var(--marron-oscuro);
+  color: var(--crema);
+  padding: 2rem 1.5rem 2.5rem;
+  text-align: center;
+  border-bottom: 6px solid var(--canela);
+  margin-top: 1rem;
+}
+
+.cabecera h1 {
+  font-family: var(--fuente-titulo);
+  font-size: 2.6rem;
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.cabecera h2 {
+  font-family: var(--fuente-texto);
+  font-weight: 400;
+  font-size: 1.1rem;
+  color: var(--canela);
+  margin: 0;
+}
+
+/* ---------- Contenido principal ---------- */
+.contenido {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 1rem;
+}
+
+.foto-principal {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 20px rgba(58, 36, 24, 0.25);
+}
+
+.seccion {
+  margin-bottom: 2rem;
+}
+
+.seccion h2 {
+  font-family: var(--fuente-titulo);
+  color: var(--marron-medio);
+  border-left: 4px solid var(--canela);
+  padding-left: 0.6rem;
+  font-size: 1.4rem;
+}
+
+.seccion p {
+  margin: 0.6rem 0 0;
+  font-size: 1.02rem;
+}
+
+/* ---------- Pie de página ---------- */
+.pie {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: var(--marron-medio);
+  color: var(--crema);
+  font-size: 0.9rem;
+  margin-top: 2rem;
+}
+
+@media (max-width: 480px) {
+  .cabecera h1 {
+    font-size: 2rem;
+  }
+}
