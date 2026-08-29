@@ -1,0 +1,130 @@
+:root {
+  --marron-oscuro: #3a2418;
+  --marron-medio: #6f4e37;
+  --crema: #f5ede1;
+  --canela: #c48f5f;
+  --texto: #2b1d14;
+  --fuente-titulo: Georgia, 'Times New Roman', serif;
+  --fuente-texto: 'Segoe UI', Tahoma, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--crema);
+  color: var(--texto);
+  font-family: var(--fuente-texto);
+  line-height: 1.6;
+}
+
+.volver {
+  display: inline-block;
+  margin: 1rem 1.5rem 0;
+  color: var(--marron-medio);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.volver:hover {
+  text-decoration: underline;
+}
+
+.cabecera {
+  background-color: var(--marron-oscuro);
+  color: var(--crema);
+  padding: 2rem 1.5rem 2.5rem;
+  text-align: center;
+  border-bottom: 6px solid var(--canela);
+  margin-top: 1rem;
+}
+
+.cabecera h1 {
+  font-family: var(--fuente-titulo);
+  font-size: 2.4rem;
+  margin: 0 0 0.5rem;
+}
+
+.cabecera h2 {
+  font-family: var(--fuente-texto);
+  font-weight: 400;
+  font-size: 1.05rem;
+  color: var(--canela);
+  margin: 0;
+}
+
+.contenido {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+canvas {
+  max-width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(58, 36, 24, 0.25);
+  background-color: #ffffff;
+}
+
+.contenido p {
+  margin: 1.2rem auto 0;
+  max-width: 550px;
+  font-size: 1rem;
+  color: var(--marron-medio);
+}
+
+#botonPausa {
+  margin-top: 1.2rem;
+  padding: 0.7rem 1.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--marron-oscuro);
+  color: var(--crema);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#botonPausa:hover {
+  background-color: var(--marron-medio);
+}
+
+.lista-subactividades {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lista-subactividades a {
+  display: block;
+  background-color: #ffffff;
+  border: 1px solid #e4d5c1;
+  border-radius: 10px;
+  padding: 1rem;
+  text-decoration: none;
+  color: var(--marron-medio);
+  font-weight: 600;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 10px rgba(58, 36, 24, 0.08);
+}
+
+.lista-subactividades a:hover {
+  background-color: var(--crema);
+}
+
+.pie {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: var(--marron-medio);
+  color: var(--crema);
+  font-size: 0.9rem;
+  margin-top: 2rem;
+}
