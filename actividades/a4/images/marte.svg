@@ -1,0 +1,17 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gMarte" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#f0916a"/>
+      <stop offset="55%" stop-color="#c1502e"/>
+      <stop offset="100%" stop-color="#7a2c15"/>
+    </radialGradient>
+  </defs>
+  <circle cx="150" cy="150" r="120" fill="url(#gMarte)"/>
+  <path d="M60,140 Q140,150 220,130" stroke="#8a3418" stroke-width="6" fill="none" opacity="0.6"/>
+  <circle cx="110" cy="110" r="16" fill="#8a3418" opacity="0.5"/>
+  <circle cx="190" cy="170" r="22" fill="#8a3418" opacity="0.45"/>
+  <circle cx="150" cy="200" r="10" fill="#8a3418" opacity="0.5"/>
+  <circle cx="205" cy="100" r="12" fill="#8a3418" opacity="0.5"/>
+  <circle cx="150" cy="150" r="120" fill="none" stroke="#5a4232" stroke-width="0"/>
+  <ellipse cx="150" cy="60" rx="55" ry="14" fill="#f5f5f5" opacity="0.5"/>
+</svg>

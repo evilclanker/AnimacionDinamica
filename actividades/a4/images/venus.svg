@@ -1,0 +1,13 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gVenus" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#ffe1a1"/>
+      <stop offset="55%" stop-color="#e8b34c"/>
+      <stop offset="100%" stop-color="#a97321"/>
+    </radialGradient>
+  </defs>
+  <circle cx="150" cy="150" r="120" fill="url(#gVenus)"/>
+  <path d="M45,120 Q120,95 160,120 T260,110" stroke="#c98f2e" stroke-width="10" fill="none" opacity="0.55"/>
+  <path d="M35,160 Q110,180 170,155 T265,165" stroke="#c98f2e" stroke-width="12" fill="none" opacity="0.5"/>
+  <path d="M55,200 Q130,220 190,195 T255,205" stroke="#b87f28" stroke-width="9" fill="none" opacity="0.45"/>
+</svg>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estación de Exploración Planetaria</title>
+<link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+  <div class="consola">
+    <header class="consola-header">
+      <h1>Estación de Exploración Planetaria</h1>
+      <div class="estado"><span class="punto"></span>enlace activo · presiona una tecla</div>
+    </header>
+
+    <main>
+      <section class="panel-imagen" aria-live="polite">
+        <div class="marco-esquinas">
+          <span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>
+        </div>
+        <img id="imagen-cuerpo" src="images/mercurio.svg" alt="Ilustración de Mercurio">
+      </section>
+
+      <section class="panel-datos" aria-live="polite">
+        <span class="etiqueta">Registro del cuerpo celeste</span>
+        <h2 id="nombre-cuerpo">Mercurio</h2>
+        <p id="descripcion-cuerpo">El planeta más cercano al Sol...</p>
+        <div class="metrica-fila"><span>Temperatura</span><span id="dato-temperatura">—</span></div>
+        <div class="metrica-fila"><span>Distancia al Sol</span><span id="dato-distancia">—</span></div>
+        <div class="metrica-fila"><span>Lunas</span><span id="dato-lunas">—</span></div>
+      </section>
+    </main>
+
+    <section class="leyenda" aria-label="Controles de teclado">
+      <div class="tecla" data-tecla="1"><kbd>1</kbd> / <kbd>M</kbd> Mercurio</div>
+      <div class="tecla" data-tecla="2"><kbd>2</kbd> / <kbd>V</kbd> Venus</div>
+      <div class="tecla" data-tecla="3"><kbd>3</kbd> / <kbd>T</kbd> Tierra</div>
+      <div class="tecla" data-tecla="4"><kbd>4</kbd> / <kbd>R</kbd> Marte</div>
+      <div class="tecla" data-tecla="5"><kbd>5</kbd> / <kbd>J</kbd> Júpiter</div>
+    </section>
+
+    <footer>
+      <a href="../../index.html">← Volver al menú principal</a>
+    </footer>
+  </div>
+
+  <script src="js/keycodes.js"></script>
+</body>
+</html>

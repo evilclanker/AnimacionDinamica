@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0a0e1a;
+  --panel: #12182b;
+  --panel-line: #263252;
+  --text: #e8ecf5;
+  --muted: #7c8aa8;
+  --accent: #3aa8c1;
+  --accent-dim: rgba(58, 168, 193, 0.25);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+body {
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 140px 90px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 260px 40px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 320px 180px, rgba(255,255,255,0.35), transparent),
+    radial-gradient(1.5px 1.5px at 60px 220px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1px 1px at 400px 260px, rgba(255,255,255,0.4), transparent);
+  background-repeat: repeat;
+  background-size: 440px 320px;
+}
+
+.consola {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.consola-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--panel-line);
+  padding-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.consola-header h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.consola-header .estado {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.estado .punto {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 6px;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 720px) {
+  main { grid-template-columns: 1fr; }
+}
+
+.panel-imagen {
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 320px;
+}
+
+.panel-imagen img {
+  width: 220px;
+  height: 220px;
+  filter: drop-shadow(0 0 30px var(--accent-dim));
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.panel-imagen .marco-esquinas span {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--accent);
+  opacity: 0.7;
+}
+.marco-esquinas .tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+.marco-esquinas .tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+.marco-esquinas .bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+.marco-esquinas .br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+.panel-datos {
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  border-radius: 10px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.panel-datos .etiqueta {
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.panel-datos h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.panel-datos p {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.metrica-fila {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: var(--muted);
+  border-top: 1px dashed var(--panel-line);
+  padding-top: 10px;
+}
+
+.metrica-fila span:last-child { color: var(--text); }
+
+.leyenda {
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tecla {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.tecla kbd {
+  background: #1c2440;
+  border: 1px solid var(--panel-line);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.tecla.activa {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-top: 8px;
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }

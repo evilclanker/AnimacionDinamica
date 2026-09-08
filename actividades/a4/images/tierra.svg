@@ -1,0 +1,17 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gTierra" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#7fd4e8"/>
+      <stop offset="55%" stop-color="#3aa8c1"/>
+      <stop offset="100%" stop-color="#1b5f74"/>
+    </radialGradient>
+  </defs>
+  <circle cx="150" cy="150" r="120" fill="url(#gTierra)"/>
+  <path d="M70,90 Q95,75 120,95 Q100,115 80,110 Q70,100 70,90 Z" fill="#3f8f4a" opacity="0.85"/>
+  <path d="M150,70 Q190,80 185,120 Q160,130 145,110 Q140,90 150,70 Z" fill="#3f8f4a" opacity="0.85"/>
+  <path d="M100,170 Q140,160 160,190 Q150,220 115,215 Q95,195 100,170 Z" fill="#3f8f4a" opacity="0.85"/>
+  <path d="M190,150 Q225,155 220,185 Q195,195 185,175 Z" fill="#3f8f4a" opacity="0.85"/>
+  <circle cx="150" cy="150" r="120" fill="none"/>
+  <path d="M50,130 Q100,110 150,130 T250,120" stroke="white" stroke-width="8" fill="none" opacity="0.35"/>
+  <path d="M55,190 Q110,205 165,185 T245,195" stroke="white" stroke-width="7" fill="none" opacity="0.3"/>
+</svg>
