@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ojos que siguen al mouse · atan2</title>
+    <link rel="stylesheet" href="estilos.css">
+  </head>
+  <body>
+
+    <a href="../../index.html" class="volver">← Volver al menú principal</a>
+
+    <header class="cabecera">
+      <h1>Ojos que siguen al mouse</h1>
+      <h2>Cada ojo calcula su propio ángulo con Math.atan2(dy, dx)</h2>
+    </header>
+
+    <main class="contenido">
+      <canvas id="canvas" width="1000" height="700"></canvas>
+      <aside>Mueve el mouse sobre el canvas: los ojos te van a seguir.</aside>
+    </main>
+
+    <script src="utils.js"></script>
+    <script>
+    window.onload = function () {
+      var canvas = document.getElementById('canvas'),
+          context = canvas.getContext('2d'),
+          mouse = utils.captureMouse(canvas);
+
+      var colorCara = '#f2d9a1';
+      var colorLinea = '#3a2418';
+
+      function dibujarOjo(cx, cy, radioOjo, radioPupila) {
+        // Parte blanca del ojo
+        context.beginPath();
+        context.arc(cx, cy, radioOjo, 0, Math.PI * 2);
+        context.fillStyle = '#ffffff';
+        context.fill();
+        context.lineWidth = 5;
+        context.strokeStyle = colorLinea;
+        context.stroke();
+
+        // Ángulo hacia el mouse, calculado desde el CENTRO de este ojo
+        var dx = mouse.x - cx,
+            dy = mouse.y - cy;
+        var angulo = Math.atan2(dy, dx); //radians
+
+        // La pupila se mueve en esa dirección, sin salirse del ojo
+        var distancia = Math.min(radioOjo - radioPupila - 6, Math.hypot(dx, dy));
+        var px = cx + Math.cos(angulo) * distancia;
+        var py = cy + Math.sin(angulo) * distancia;
+
+        // Pupila
+        context.beginPath();
+        context.arc(px, py, radioPupila, 0, Math.PI * 2);
+        context.fillStyle = colorLinea;
+        context.fill();
+
+        // Brillo pequeño para que se vea más viva
+        context.beginPath();
+        context.arc(px + radioPupila * 0.3, py - radioPupila * 0.3, radioPupila * 0.25, 0, Math.PI * 2);
+        context.fillStyle = '#ffffff';
+        context.fill();
+      }
+
+      (function drawFrame () {
+        window.requestAnimationFrame(drawFrame, canvas);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Cara redonda de fondo
+        context.beginPath();
+        context.arc(canvas.width / 2, canvas.height / 2, 260, 0, Math.PI * 2);
+        context.fillStyle = colorCara;
+        context.fill();
+        context.lineWidth = 6;
+        context.strokeStyle = colorLinea;
+        context.stroke();
+
+        // Los dos ojos
+        dibujarOjo(canvas.width / 2 - 110, canvas.height / 2 - 40, 70, 26);
+        dibujarOjo(canvas.width / 2 + 110, canvas.height / 2 - 40, 70, 26);
+
+        // Sonrisa fija
+        context.beginPath();
+        context.arc(canvas.width / 2, canvas.height / 2 + 40, 120, 0.15 * Math.PI, 0.85 * Math.PI);
+        context.lineWidth = 10;
+        context.strokeStyle = colorLinea;
+        context.lineCap = 'round';
+        context.stroke();
+      }());
+    };
+    </script>
+
+    <footer class="pie">
+      <p>Actividad · Clase 04, Trigonometría: ojos que siguen al mouse con atan2.</p>
+    </footer>
+
+  </body>
+</html>
