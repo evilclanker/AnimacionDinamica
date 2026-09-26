@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onda seno + coseno · posición y escala</title>
+    <link rel="stylesheet" href="estilos.css">
+  </head>
+  <body>
+
+    <a href="../../index.html" class="volver">← Volver al menú principal</a>
+
+    <header class="cabecera">
+      <h1>Onda con seno y coseno</h1>
+      <h2>Una misma animación modifica posición (Y) y escala al mismo tiempo</h2>
+    </header>
+
+    <main class="contenido">
+      <canvas id="canvas" width="1000" height="420"></canvas>
+      <p>
+        Cada punto se acomoda en fila y usa <code>Math.sin()</code> para subir
+        y bajar (posición en Y), mientras que <code>Math.cos()</code>, con ese
+        mismo ángulo, controla su tamaño (escala). Como cada punto tiene un
+        pequeño desfase respecto al anterior, el conjunto se ve como una onda
+        que viaja de izquierda a derecha.
+      </p>
+    </main>
+
+    <script>
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+
+      var numPuntos = 40;
+      var espacio = canvas.width / (numPuntos - 1);
+      var lineaBase = canvas.height / 2;
+      var amplitud = 90;      // qué tanto sube/baja (posición)
+      var radioBase = 10;     // tamaño base del punto (escala)
+
+      var colores = ['#3a2418', '#6f4e37', '#a3603a', '#c48f5f'];
+
+      var t = 0; // "tiempo" que avanza cada cuadro, en radianes
+
+      function dibujar() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (var i = 0; i < numPuntos; i++) {
+          var angulo = t + i * 0.35; // desfase por punto -> efecto de onda
+
+          // Posición: se mueve en el eje Y con seno
+          var x = i * espacio;
+          var y = lineaBase + Math.sin(angulo) * amplitud;
+
+          // Escala: el radio cambia con coseno del MISMO ángulo
+          var escala = 1 + Math.cos(angulo) * 0.6;
+          var radio = radioBase * escala;
+
+          context.beginPath();
+          context.arc(x, y, Math.max(radio, 2), 0, Math.PI * 2);
+          context.fillStyle = colores[i % colores.length];
+          context.fill();
+        }
+
+        t += 0.06;
+        requestAnimationFrame(dibujar);
+      }
+
+      dibujar();
+    </script>
+
+    <footer class="pie">
+      <p>Actividad · Animación con onda seno/coseno modificando posición y escala.</p>
+    </footer>
+
+  </body>
+</html>
