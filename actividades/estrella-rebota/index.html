@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrella rebotando</title>
+    <link rel="stylesheet" href="estilos.css">
+  </head>
+  <body>
+
+    <a href="../../index.html" class="volver">← Volver al menú principal</a>
+
+    <header class="cabecera">
+      <h1>Estrella rebotando</h1>
+      <h2>Rebote tipo pelota mientras cruza la pantalla de un lado a otro</h2>
+    </header>
+
+    <main class="contenido">
+      <canvas id="canvas" width="1000" height="500"></canvas>
+      <p>
+        La estrella se mueve horizontalmente y rebota contra las paredes del
+        canvas, mientras que en el eje vertical sigue una trayectoria de
+        rebote real (gravedad + rebote), con sombra dinámica y un efecto de
+        "squash &amp; stretch": se achata al tocar el piso y se estira un
+        poco en el aire, como en la animación clásica.
+      </p>
+    </main>
+
+    <script>
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+
+      var estrella = new Image();
+      estrella.src = 'img/estrella.png';
+
+      var anchoBase = 130;
+      var altoBase = 130 * (estrellaAltoAncho());
+      function estrellaAltoAncho() { return 191 / 200; } // proporción real de la imagen
+
+      var pisoY = canvas.height - 40;   // línea del "piso" donde rebota
+      var alturaMax = 260;              // qué tan alto llega cada rebote
+
+      // Movimiento horizontal: rebota de pared a pared
+      var x = 100;
+      var velocidadX = 4;
+
+      // "Tiempo" para el rebote vertical (independiente de x)
+      var t = 0;
+      var velocidadRebote = 0.05;
+
+      function dibujarSombra(cx, pisoY, factorAltura) {
+        // La sombra se encoge cuando la estrella está en el aire (arriba)
+        var anchoSombra = 70 * (1 - factorAltura * 0.6);
+        var opacidad = 0.35 * (1 - factorAltura * 0.5);
+        context.beginPath();
+        context.ellipse(cx, pisoY + 6, anchoSombra, anchoSombra * 0.28, 0, 0, Math.PI * 2);
+        context.fillStyle = 'rgba(58, 36, 24, ' + opacidad + ')';
+        context.fill();
+      }
+
+      function dibujar() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // ---- Movimiento horizontal (rebota en las paredes) ----
+        x += velocidadX;
+        if (x - anchoBase / 2 <= 0 || x + anchoBase / 2 >= canvas.width) {
+          velocidadX *= -1;
+        }
+
+        // ---- Rebote vertical tipo pelota: |sin(t)| simula gravedad + rebote ----
+        var progreso = Math.abs(Math.sin(t)); // 0 = tocando el piso, 1 = punto más alto
+        var y = pisoY - progreso * alturaMax;
+
+        // ---- Squash & stretch ----
+        // Cerca del piso (progreso bajo) se achata; en el aire se estira.
+        var factorAchate = 1 - progreso; // 1 = en el piso, 0 = en el aire
+        var escalaY = 1 - 0.25 * factorAchate; // más bajo al tocar el piso
+        var escalaX = 1 + 0.25 * factorAchate; // más ancho al tocar el piso
+
+        dibujarSombra(x, pisoY, progreso);
+
+        context.save();
+        context.translate(x, y);
+        context.scale(escalaX, escalaY);
+        context.drawImage(estrella, -anchoBase / 2, -altoBase / 2, anchoBase, altoBase);
+        context.restore();
+
+        t += velocidadRebote;
+        requestAnimationFrame(dibujar);
+      }
+
+      estrella.onload = function () {
+        dibujar();
+      };
+    </script>
+
+    <footer class="pie">
+      <p>Actividad · Estrella que rebota combinando movimiento horizontal, rebote vertical y squash &amp; stretch.</p>
+    </footer>
+
+  </body>
+</html>
