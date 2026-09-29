@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figuras con Canvas API</title>
+    <link rel="stylesheet" href="estilos.css">
+  </head>
+  <body>
+
+    <a href="../../index.html" class="volver">← Volver al menú principal</a>
+
+    <header class="cabecera">
+      <h1>Figuras con Canvas API</h1>
+      <h2>Dibujadas solo con métodos del API: lineTo, arc, ellipse, bezierCurveTo…</h2>
+    </header>
+
+    <main class="contenido">
+      <div class="rejilla">
+
+        <div class="tarjeta">
+          <canvas id="casita" width="280" height="280"></canvas>
+          <p>Casita</p>
+        </div>
+
+        <div class="tarjeta">
+          <canvas id="honguito" width="280" height="280"></canvas>
+          <p>Honguito</p>
+        </div>
+
+        <div class="tarjeta">
+          <canvas id="estrella" width="280" height="280"></canvas>
+          <p>Estrella</p>
+        </div>
+
+        <div class="tarjeta">
+          <canvas id="luna" width="280" height="280"></canvas>
+          <p>Luna (dos círculos intersectados)</p>
+        </div>
+
+        <div class="tarjeta">
+          <canvas id="libre" width="280" height="280"></canvas>
+          <p>Libre: taza de café</p>
+        </div>
+
+        <div class="tarjeta">
+          <canvas id="zorrito" width="280" height="280"></canvas>
+          <p>Extra: zorrito (ilustración original)</p>
+        </div>
+
+      </div>
+    </main>
+
+    <script>
+      // ================= CASITA =================
+      (function () {
+        var c = document.getElementById('casita').getContext('2d');
+
+        // Cuerpo
+        c.fillStyle = '#e6c9a3';
+        c.strokeStyle = '#3a2418';
+        c.lineWidth = 4;
+        c.fillRect(60, 150, 160, 100);
+        c.strokeRect(60, 150, 160, 100);
+
+        // Techo
+        c.beginPath();
+        c.moveTo(45, 150);
+        c.lineTo(140, 70);
+        c.lineTo(235, 150);
+        c.closePath();
+        c.fillStyle = '#a3603a';
+        c.fill();
+        c.stroke();
+
+        // Puerta
+        c.fillStyle = '#3a2418';
+        c.fillRect(120, 190, 40, 60);
+
+        // Perilla
+        c.beginPath();
+        c.arc(152, 220, 3, 0, Math.PI * 2);
+        c.fillStyle = '#e6c9a3';
+        c.fill();
+
+        // Ventana
+        c.fillStyle = '#f5ede1';
+        c.fillRect(80, 170, 30, 30);
+        c.strokeRect(80, 170, 30, 30);
+        c.beginPath();
+        c.moveTo(95, 170); c.lineTo(95, 200);
+        c.moveTo(80, 185); c.lineTo(110, 185);
+        c.stroke();
+
+        c.fillRect(170, 170, 30, 30);
+        c.strokeRect(170, 170, 30, 30);
+        c.beginPath();
+        c.moveTo(185, 170); c.lineTo(185, 200);
+        c.moveTo(170, 185); c.lineTo(200, 185);
+        c.stroke();
+      }());
+
+      // ================= HONGUITO =================
+      (function () {
+        var c = document.getElementById('honguito').getContext('2d');
+
+        // Sombrero (media circunferencia con arc)
+        c.beginPath();
+        c.arc(140, 140, 75, Math.PI, Math.PI * 2);
+        c.closePath();
+        c.fillStyle = '#c1443a';
+        c.fill();
+        c.strokeStyle = '#3a2418';
+        c.lineWidth = 4;
+        c.stroke();
+
+        // Manchitas blancas del sombrero
+        var manchas = [[105, 105, 10], [150, 90, 8], [180, 115, 9], [120, 125, 6]];
+        manchas.forEach(function (m) {
+          c.beginPath();
+          c.ellipse(m[0], m[1], m[2], m[2] * 0.8, 0, 0, Math.PI * 2);
+          c.fillStyle = '#f5ede1';
+          c.fill();
+        });
+
+        // Tallo
+        c.fillStyle = '#f5ede1';
+        c.fillRect(110, 140, 60, 90);
+        c.strokeRect(110, 140, 60, 90);
+
+        // Sombra del tallo (curva con quadraticCurveTo)
+        c.beginPath();
+        c.moveTo(120, 150);
+        c.quadraticCurveTo(140, 180, 120, 220);
+        c.strokeStyle = 'rgba(58,36,24,0.3)';
+        c.lineWidth = 3;
+        c.stroke();
+      }());
+
+      // ================= ESTRELLA =================
+      (function () {
+        var c = document.getElementById('estrella').getContext('2d');
+        var cx = 140, cy = 150, puntas = 5, rExterno = 95, rInterno = 38;
+
+        c.beginPath();
+        for (var i = 0; i < puntas * 2; i++) {
+          var radio = (i % 2 === 0) ? rExterno : rInterno;
+          var angulo = (Math.PI / puntas) * i - Math.PI / 2;
+          var x = cx + Math.cos(angulo) * radio;
+          var y = cy + Math.sin(angulo) * radio;
+          if (i === 0) { c.moveTo(x, y); } else { c.lineTo(x, y); }
+        }
+        c.closePath();
+        c.fillStyle = '#c48f5f';
+        c.fill();
+        c.strokeStyle = '#3a2418';
+        c.lineWidth = 4;
+        c.stroke();
+      }());
+
+      // ================= LUNA (dos círculos intersectados) =================
+      (function () {
+        var c = document.getElementById('luna').getContext('2d');
+
+        // 1. Disco de luna llena (círculo 1)
+        c.beginPath();
+        c.arc(140, 140, 80, 0, Math.PI * 2);
+        c.fillStyle = '#f2d9a1';
+        c.fill();
+
+        // 2. Círculo 2, desfasado: recorta una "mordida" y deja transparente
+        c.globalCompositeOperation = 'destination-out';
+        c.beginPath();
+        c.arc(180, 105, 72, 0, Math.PI * 2);
+        c.fill();
+
+        // 3. Cielo detrás: se pinta SOLO donde quedó transparente (destination-over)
+        c.globalCompositeOperation = 'destination-over';
+        c.fillStyle = '#1c1730';
+        c.fillRect(0, 0, 280, 280);
+
+        // 4. Estrellitas encima del cielo
+        c.globalCompositeOperation = 'source-over';
+        c.fillStyle = '#f5ede1';
+        [[40, 50], [220, 40], [60, 220], [230, 200], [30, 130], [50, 190]].forEach(function (p) {
+          c.beginPath();
+          c.arc(p[0], p[1], 2, 0, Math.PI * 2);
+          c.fill();
+        });
+
+        // Contorno sutil de la luna resultante
+        c.beginPath();
+        c.arc(140, 140, 80, 0, Math.PI * 2);
+        c.strokeStyle = 'rgba(242, 217, 161, 0.35)';
+        c.lineWidth = 2;
+        c.stroke();
+      }());
+
+      // ================= LIBRE: TAZA DE CAFÉ =================
+      (function () {
+        var c = document.getElementById('libre').getContext('2d');
+
+        c.strokeStyle = '#3a2418';
+        c.lineWidth = 4;
+
+        // Cuerpo de la taza (trapecio con lineTo)
+        c.beginPath();
+        c.moveTo(85, 110);
+        c.lineTo(195, 110);
+        c.lineTo(185, 210);
+        c.lineTo(95, 210);
+        c.closePath();
+        c.fillStyle = '#ffffff';
+        c.fill();
+        c.stroke();
+
+        // Café (elipse superior)
+        c.beginPath();
+        c.ellipse(140, 110, 55, 12, 0, 0, Math.PI * 2);
+        c.fillStyle = '#4a2c1a';
+        c.fill();
+        c.stroke();
+
+        // Asa (arc)
+        c.beginPath();
+        c.arc(205, 150, 28, -Math.PI / 2, Math.PI / 2);
+        c.stroke();
+
+        // Platito
+        c.beginPath();
+        c.ellipse(140, 214, 80, 14, 0, 0, Math.PI * 2);
+        c.fillStyle = '#ffffff';
+        c.fill();
+        c.stroke();
+
+        // Vapor (curvas con quadraticCurveTo)
+        c.strokeStyle = '#a3603a';
+        c.lineWidth = 3;
+        [110, 140, 170].forEach(function (baseX) {
+          c.beginPath();
+          c.moveTo(baseX, 90);
+          c.quadraticCurveTo(baseX - 12, 65, baseX, 45);
+          c.quadraticCurveTo(baseX + 12, 25, baseX, 10);
+          c.stroke();
+        });
+      }());
+
+      // ================= EXTRA: ZORRITO (ilustración original) =================
+      (function () {
+        var c = document.getElementById('zorrito').getContext('2d');
+
+        // Oreja izquierda
+        c.beginPath();
+        c.moveTo(75, 100);
+        c.lineTo(55, 30);
+        c.lineTo(115, 75);
+        c.closePath();
+        c.fillStyle = '#c48f5f';
+        c.fill();
+        c.strokeStyle = '#3a2418';
+        c.lineWidth = 3;
+        c.stroke();
+        // interior de oreja
+        c.beginPath();
+        c.moveTo(80, 90);
+        c.lineTo(68, 50);
+        c.lineTo(100, 78);
+        c.closePath();
+        c.fillStyle = '#f5ede1';
+        c.fill();
+
+        // Oreja derecha (espejo)
+        c.beginPath();
+        c.moveTo(205, 100);
+        c.lineTo(225, 30);
+        c.lineTo(165, 75);
+        c.closePath();
+        c.fillStyle = '#c48f5f';
+        c.fill();
+        c.stroke();
+        c.beginPath();
+        c.moveTo(200, 90);
+        c.lineTo(212, 50);
+        c.lineTo(180, 78);
+        c.closePath();
+        c.fillStyle = '#f5ede1';
+        c.fill();
+
+        // Cabeza (usando bezierCurveTo para un contorno suave)
+        c.beginPath();
+        c.moveTo(140, 60);
+        c.bezierCurveTo(200, 60, 225, 110, 200, 160);
+        c.bezierCurveTo(185, 195, 95, 195, 80, 160);
+        c.bezierCurveTo(55, 110, 80, 60, 140, 60);
+        c.closePath();
+        c.fillStyle = '#c48f5f';
+        c.fill();
+        c.strokeStyle = '#3a2418';
+        c.lineWidth = 3;
+        c.stroke();
+
+        // Mancha/hocico blanco, más puntiagudo (bezier)
+        c.beginPath();
+        c.moveTo(108, 118);
+        c.bezierCurveTo(100, 145, 110, 175, 140, 198);
+        c.bezierCurveTo(170, 175, 180, 145, 172, 118);
+        c.bezierCurveTo(158, 105, 122, 105, 108, 118);
+        c.closePath();
+        c.fillStyle = '#f5ede1';
+        c.fill();
+        c.stroke();
+
+        // Nariz (triángulo)
+        c.beginPath();
+        c.moveTo(140, 168);
+        c.lineTo(130, 180);
+        c.lineTo(150, 180);
+        c.closePath();
+        c.fillStyle = '#3a2418';
+        c.fill();
+
+        // Boca (curva)
+        c.beginPath();
+        c.moveTo(140, 180);
+        c.quadraticCurveTo(140, 190, 125, 193);
+        c.moveTo(140, 180);
+        c.quadraticCurveTo(140, 190, 155, 193);
+        c.strokeStyle = '#3a2418';
+        c.lineWidth = 2;
+        c.stroke();
+
+        // Ojos
+        [108, 172].forEach(function (ex) {
+          c.beginPath();
+          c.ellipse(ex, 125, 12, 15, 0, 0, Math.PI * 2);
+          c.fillStyle = '#ffffff';
+          c.fill();
+          c.strokeStyle = '#3a2418';
+          c.lineWidth = 2;
+          c.stroke();
+
+          c.beginPath();
+          c.arc(ex, 128, 6, 0, Math.PI * 2);
+          c.fillStyle = '#3a2418';
+          c.fill();
+
+          c.beginPath();
+          c.arc(ex + 2, 125, 2, 0, Math.PI * 2);
+          c.fillStyle = '#ffffff';
+          c.fill();
+        });
+
+        // Marcas de las mejillas (detalle extra)
+        c.strokeStyle = '#a3603a';
+        c.lineWidth = 2;
+        [[70, 140], [210, 140]].forEach(function (p) {
+          for (var i = 0; i < 2; i++) {
+            c.beginPath();
+            c.moveTo(p[0], p[1] + i * 10);
+            c.lineTo(p[0] + (p[0] < 140 ? -25 : 25), p[1] + i * 10 - 3);
+            c.stroke();
+          }
+        });
+      }());
+    </script>
+
+    <footer class="pie">
+      <p>Actividad · Figuras dibujadas con métodos del Canvas API (sin imágenes externas).</p>
+    </footer>
+
+  </body>
+</html>
