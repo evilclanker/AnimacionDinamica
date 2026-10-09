@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reloj animado</title>
+    <link rel="stylesheet" href="estilos.css">
+  </head>
+  <body>
+
+    <a href="../../index.html" class="volver">← Volver al menú principal</a>
+
+    <header class="cabecera">
+      <h1>Reloj con tres manecillas</h1>
+      <h2>Cada manecilla tiene su propia velocidad de rotación, proporcional a un reloj real</h2>
+    </header>
+
+    <main class="contenido">
+      <canvas id="canvas" width="420" height="420"></canvas>
+      <p>
+        Las tres manecillas giran a velocidades proporcionales a las reales
+        (segundero 60× más rápido que el horario, minutero 12× más rápido
+        que el horario — igual que en un reloj de verdad), pero todas
+        multiplicadas por el mismo factor para que el movimiento se note
+        a simple vista en unos segundos en vez de tardarse 12 horas.
+      </p>
+      <div class="controles">
+        <label for="velocidad">Velocidad de la simulación:</label>
+        <input type="range" id="velocidad" min="1" max="200" value="60">
+        <span id="valorVelocidad">60×</span>
+      </div>
+    </main>
+
+    <script>
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+      var radio = 190;
+      var cx = canvas.width / 2;
+      var cy = canvas.height / 2;
+
+      var inputVelocidad = document.getElementById('velocidad');
+      var labelVelocidad = document.getElementById('valorVelocidad');
+      var factorVelocidad = parseFloat(inputVelocidad.value);
+      inputVelocidad.addEventListener('input', function () {
+        factorVelocidad = parseFloat(inputVelocidad.value);
+        labelVelocidad.textContent = factorVelocidad + '×';
+      });
+
+      // ---- Velocidades angulares reales de un reloj (radianes/segundo) ----
+      // Segundero: una vuelta completa (2π) cada 60s
+      var vrSegundos = (Math.PI * 2) / 60;
+      // Minutero: una vuelta completa cada 60 minutos = 3600s
+      var vrMinutos = (Math.PI * 2) / 3600;
+      // Horario: una vuelta completa cada 12 horas = 43200s
+      var vrHoras = (Math.PI * 2) / 43200;
+      // Nota: vrSegundos = 60 × vrMinutos = 720 × vrHoras, igual que un reloj real.
+
+      // Ángulos acumulados, arrancando desde la hora actual de la computadora
+      var ahora = new Date();
+      var segundosDelDia = ahora.getHours() % 12 * 3600 + ahora.getMinutes() * 60 + ahora.getSeconds();
+      var anguloHoras = vrHoras * segundosDelDia;
+      var anguloMinutos = vrMinutos * (segundosDelDia % 3600);
+      var anguloSegundos = vrSegundos * (segundosDelDia % 60);
+
+      var ultimoTiempo = null;
+
+      function dibujarCaratula() {
+        // Círculo exterior
+        ctx.beginPath();
+        ctx.arc(cx, cy, radio, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = '#3a2418';
+        ctx.stroke();
+
+        // Aro interior decorativo
+        ctx.beginPath();
+        ctx.arc(cx, cy, radio - 16, 0, Math.PI * 2);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#c48f5f';
+        ctx.stroke();
+
+        // Marcas de hora (12) y de minuto (60)
+        for (var i = 0; i < 60; i++) {
+          var angulo = (Math.PI * 2 / 60) * i;
+          var esHora = i % 5 === 0;
+          var rExt = radio - 20;
+          var rInt = esHora ? radio - 42 : radio - 32;
+
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(angulo) * rExt, cy + Math.sin(angulo) * rExt);
+          ctx.lineTo(cx + Math.cos(angulo) * rInt, cy + Math.sin(angulo) * rInt);
+          ctx.lineWidth = esHora ? 4 : 1.5;
+          ctx.strokeStyle = '#3a2418';
+          ctx.stroke();
+        }
+
+        // Números
+        ctx.fillStyle = '#3a2418';
+        ctx.font = 'bold 22px Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (var n = 1; n <= 12; n++) {
+          var angNum = (Math.PI * 2 / 12) * n - Math.PI / 2;
+          var rNum = radio - 62;
+          ctx.fillText(n, cx + Math.cos(angNum) * rNum, cy + Math.sin(angNum) * rNum);
+        }
+      }
+
+      function dibujarManecilla(angulo, largo, grosor, color) {
+        // -Math.PI/2 para que el ángulo 0 apunte hacia las 12, no hacia las 3
+        var a = angulo - Math.PI / 2;
+        ctx.beginPath();
+        ctx.moveTo(cx - Math.cos(a) * largo * 0.15, cy - Math.sin(a) * largo * 0.15);
+        ctx.lineTo(cx + Math.cos(a) * largo, cy + Math.sin(a) * largo);
+        ctx.lineWidth = grosor;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = color;
+        ctx.stroke();
+      }
+
+      function dibujar(tiempoActual) {
+        if (ultimoTiempo === null) { ultimoTiempo = tiempoActual; }
+        var deltaSegundos = (tiempoActual - ultimoTiempo) / 1000;
+        ultimoTiempo = tiempoActual;
+
+        // Cada manecilla avanza su propia velocidad real × el factor de la simulación
+        anguloHoras += vrHoras * factorVelocidad * deltaSegundos;
+        anguloMinutos += vrMinutos * factorVelocidad * deltaSegundos;
+        anguloSegundos += vrSegundos * factorVelocidad * deltaSegundos;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        dibujarCaratula();
+
+        dibujarManecilla(anguloHoras, radio * 0.5, 8, '#3a2418');   // horario: corta y gruesa
+        dibujarManecilla(anguloMinutos, radio * 0.75, 5, '#6f4e37'); // minutero: larga y media
+        dibujarManecilla(anguloSegundos, radio * 0.82, 2, '#c1443a'); // segundero: larga y delgada
+
+        // Centro
+        ctx.beginPath();
+        ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#3a2418';
+        ctx.fill();
+
+        requestAnimationFrame(dibujar);
+      }
+
+      requestAnimationFrame(dibujar);
+    </script>
+
+    <footer class="pie">
+      <p>Actividad · Reloj analógico con tres manecillas a velocidades proporcionales.</p>
+    </footer>
+
+  </body>
+</html>

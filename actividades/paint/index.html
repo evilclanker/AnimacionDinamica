@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint App</title>
+    <link rel="stylesheet" href="estilos.css">
+  </head>
+  <body>
+
+    <a href="../../index.html" class="volver">← Volver al menú principal</a>
+
+    <header class="cabecera">
+      <h1>Paint App</h1>
+      <h2>Dibuja con el mouse: colores, grosores y borrar todo</h2>
+    </header>
+
+    <main class="contenido">
+
+      <div id="caja-herramientas">
+
+        <div class="grupo" id="colores">
+          <span class="etiqueta-grupo">Color</span>
+          <button class="swatch activo" data-color="#3a2418" style="background:#3a2418" title="Café oscuro"></button>
+          <button class="swatch" data-color="#c1443a" style="background:#c1443a" title="Rojo teja"></button>
+          <button class="swatch" data-color="#3b7a57" style="background:#3b7a57" title="Verde bosque"></button>
+          <button class="swatch" data-color="#3669b0" style="background:#3669b0" title="Azul"></button>
+          <button class="swatch" data-color="#e8b64a" style="background:#e8b64a" title="Amarillo miel"></button>
+          <button class="swatch" data-color="#ffffff" style="background:#ffffff" title="Blanco (borrador)"></button>
+        </div>
+
+        <div class="grupo" id="grosores">
+          <span class="etiqueta-grupo">Grosor</span>
+          <button class="grosor-btn" data-grosor="3" title="Delgado">
+            <span class="punto" style="width:3px; height:3px;"></span>
+          </button>
+          <button class="grosor-btn activo" data-grosor="8" title="Medio">
+            <span class="punto" style="width:8px; height:8px;"></span>
+          </button>
+          <button class="grosor-btn" data-grosor="18" title="Grueso">
+            <span class="punto" style="width:18px; height:18px;"></span>
+          </button>
+          <button class="grosor-btn" data-grosor="32" title="Extra grueso">
+            <span class="punto" style="width:32px; height:32px;"></span>
+          </button>
+        </div>
+
+        <div class="grupo">
+          <span class="etiqueta-grupo">&nbsp;</span>
+          <button id="borrar-todo">Borrar todo</button>
+        </div>
+
+      </div>
+
+      <canvas id="canvas" width="900" height="560"></canvas>
+      <aside>Haz clic y arrastra el mouse sobre el lienzo para dibujar. También funciona con el dedo en pantallas táctiles.</aside>
+
+    </main>
+
+    <script>
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+
+      var colorActual = '#3a2418';
+      var grosorActual = 8;
+      var dibujando = false;
+      var ultimaX = null;
+      var ultimaY = null;
+
+      context.lineJoin = 'round';
+      context.lineCap = 'round';
+
+      // ---------- Selección de color ----------
+      var botonesColor = document.querySelectorAll('#colores .swatch');
+      botonesColor.forEach(function (boton) {
+        boton.addEventListener('click', function () {
+          colorActual = boton.getAttribute('data-color');
+          botonesColor.forEach(function (b) { b.classList.remove('activo'); });
+          boton.classList.add('activo');
+        });
+      });
+
+      // ---------- Selección de grosor ----------
+      var botonesGrosor = document.querySelectorAll('#grosores .grosor-btn');
+      botonesGrosor.forEach(function (boton) {
+        boton.addEventListener('click', function () {
+          grosorActual = parseInt(boton.getAttribute('data-grosor'), 10);
+          botonesGrosor.forEach(function (b) { b.classList.remove('activo'); });
+          boton.classList.add('activo');
+        });
+      });
+
+      // ---------- Borrar todo ----------
+      document.getElementById('borrar-todo').addEventListener('click', function () {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      });
+
+      // ---------- Dibujo con mouse (API de canvas: lineTo + arc) ----------
+      function posicionRelativa(evento) {
+        var rect = canvas.getBoundingClientRect();
+        var escalaX = canvas.width / rect.width;
+        var escalaY = canvas.height / rect.height;
+        var clientX = evento.touches ? evento.touches[0].clientX : evento.clientX;
+        var clientY = evento.touches ? evento.touches[0].clientY : evento.clientY;
+        return {
+          x: (clientX - rect.left) * escalaX,
+          y: (clientY - rect.top) * escalaY
+        };
+      }
+
+      function empezarTrazo(evento) {
+        evento.preventDefault();
+        dibujando = true;
+        var p = posicionRelativa(evento);
+        ultimaX = p.x;
+        ultimaY = p.y;
+
+        // Un punto al dar clic sin arrastrar, para que se note el grosor
+        context.beginPath();
+        context.fillStyle = colorActual;
+        context.arc(p.x, p.y, grosorActual / 2, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      function continuarTrazo(evento) {
+        if (!dibujando) { return; }
+        evento.preventDefault();
+        var p = posicionRelativa(evento);
+
+        context.beginPath();
+        context.strokeStyle = colorActual;
+        context.lineWidth = grosorActual;
+        context.moveTo(ultimaX, ultimaY);
+        context.lineTo(p.x, p.y);
+        context.stroke();
+
+        ultimaX = p.x;
+        ultimaY = p.y;
+      }
+
+      function terminarTrazo() {
+        dibujando = false;
+        ultimaX = null;
+        ultimaY = null;
+      }
+
+      canvas.addEventListener('mousedown', empezarTrazo);
+      canvas.addEventListener('mousemove', continuarTrazo);
+      window.addEventListener('mouseup', terminarTrazo);
+
+      canvas.addEventListener('touchstart', empezarTrazo);
+      canvas.addEventListener('touchmove', continuarTrazo);
+      window.addEventListener('touchend', terminarTrazo);
+    </script>
+
+    <footer class="pie">
+      <p>Actividad · Paint App: 6 colores, 4 grosores de pluma y botón de borrar todo.</p>
+    </footer>
+
+  </body>
+</html>
