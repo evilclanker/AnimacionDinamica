@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación de nave</title>
+    <link rel="stylesheet" href="estilos.css">
+  </head>
+  <body>
+
+    <a href="../../index.html" class="volver">← Volver al menú principal</a>
+
+    <header class="cabecera">
+      <h1>Simulación de nave</h1>
+      <h2>Propulsión, fricción y límites del espacio</h2>
+    </header>
+
+    <main class="contenido">
+      <canvas id="canvas" width="900" height="560" tabindex="0"></canvas>
+
+      <div class="panel">
+        <div class="control">
+          <label for="friccion">Fricción</label>
+          <input type="range" id="friccion" min="0.90" max="1" step="0.002" value="0.985">
+          <span id="valorFriccion">0.985</span>
+        </div>
+        <div class="control">
+          <label for="rebote">Rebote en bordes</label>
+          <input type="range" id="rebote" min="0" max="1" step="0.05" value="0.6">
+          <span id="valorRebote">0.60</span>
+        </div>
+      </div>
+
+      <aside>
+        <strong>Controles:</strong> flechas o <kbd>W</kbd> <kbd>A</kbd> <kbd>D</kbd> —
+        arriba/W = propulsor, izquierda/derecha = girar, <kbd>S</kbd> o abajo = freno.
+        Haz clic en el lienzo primero para darle el foco.
+      </aside>
+    </main>
+
+    <script>
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+
+      // ---------- Parámetros de la física ----------
+      var ACELERACION = 0.14;        // fuerza del propulsor por cuadro
+      var VELOCIDAD_GIRO = 0.065;    // radianes por cuadro
+      var VELOCIDAD_MAXIMA = 7;      // límite de velocidad
+      var friccion = 0.985;          // 1 = sin fricción, 0.9 = mucha fricción
+      var rebote = 0.6;              // energía que conserva al chocar con un borde
+
+      var nave = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        vx: 0,
+        vy: 0,
+        angulo: -Math.PI / 2,        // apunta hacia arriba
+        radio: 20,                   // para el límite de bordes
+        propulsando: false
+      };
+
+      var teclas = {};
+
+      // ---------- Fondo: estrellas con 3 capas de profundidad ----------
+      var estrellas = [];
+      for (var i = 0; i < 160; i++) {
+        var capa = Math.floor(Math.random() * 3); // 0 lejos, 2 cerca
+        estrellas.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          capa: capa,
+          r: 0.6 + capa * 0.7,
+          brillo: Math.random() * Math.PI * 2
+        });
+      }
+
+      // Nebulosas fijas (círculos con degradado radial)
+      var nebulosas = [
+        { x: 200, y: 140, r: 230, c: 'rgba(120, 60, 170, 0.28)' },
+        { x: 720, y: 400, r: 260, c: 'rgba(40, 110, 190, 0.26)' },
+        { x: 560, y: 90,  r: 160, c: 'rgba(200, 80, 120, 0.18)' }
+      ];
+
+      // Planeta decorativo en una esquina
+      function dibujarPlaneta() {
+        var px = 780, py = 120, pr = 62;
+        var g = ctx.createRadialGradient(px - 20, py - 20, 8, px, py, pr);
+        g.addColorStop(0, '#f2c58b');
+        g.addColorStop(0.6, '#b9693f');
+        g.addColorStop(1, '#4a2418');
+        ctx.beginPath();
+        ctx.arc(px, py, pr, 0, Math.PI * 2);
+        ctx.fillStyle = g;
+        ctx.fill();
+
+        // Anillo (elipse)
+        ctx.beginPath();
+        ctx.ellipse(px, py, pr * 1.7, pr * 0.42, -0.35, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(245, 237, 225, 0.55)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      }
+
+      function dibujarFondo() {
+        // Cielo
+        var cielo = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        cielo.addColorStop(0, '#0b0820');
+        cielo.addColorStop(1, '#1a1033');
+        ctx.fillStyle = cielo;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Nebulosas
+        nebulosas.forEach(function (n) {
+          var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+          g.addColorStop(0, n.c);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g;
+          ctx.fillRect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2);
+        });
+
+        dibujarPlaneta();
+
+        // Estrellas: se desplazan al revés de la velocidad (efecto parallax)
+        estrellas.forEach(function (e) {
+          var factor = (e.capa + 1) * 0.12;
+          e.x -= nave.vx * factor;
+          e.y -= nave.vy * factor;
+          if (e.x < 0) { e.x += canvas.width; }
+          if (e.x > canvas.width) { e.x -= canvas.width; }
+          if (e.y < 0) { e.y += canvas.height; }
+          if (e.y > canvas.height) { e.y -= canvas.height; }
+
+          e.brillo += 0.04;
+          var alfa = 0.55 + Math.sin(e.brillo) * 0.3 + e.capa * 0.1;
+          ctx.beginPath();
+          ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(245, 237, 225,' + alfa + ')';
+          ctx.fill();
+        });
+      }
+
+      // ---------- Nave dibujada con la API de canvas ----------
+      function dibujarNave() {
+        ctx.save();
+        ctx.translate(nave.x, nave.y);
+        ctx.rotate(nave.angulo);
+
+        // Llama del propulsor
+        if (nave.propulsando) {
+          var largo = 18 + Math.random() * 14;
+          ctx.beginPath();
+          ctx.moveTo(-14, -6);
+          ctx.lineTo(-14 - largo, 0);
+          ctx.lineTo(-14, 6);
+          ctx.closePath();
+          ctx.fillStyle = '#ffb347';
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.moveTo(-14, -3);
+          ctx.lineTo(-14 - largo * 0.55, 0);
+          ctx.lineTo(-14, 3);
+          ctx.closePath();
+          ctx.fillStyle = '#fff3c4';
+          ctx.fill();
+        }
+
+        // Alas (trapecios laterales)
+        ctx.fillStyle = '#8a97a8';
+        ctx.strokeStyle = '#1c2230';
+        ctx.lineWidth = 2;
+        [-1, 1].forEach(function (lado) {
+          ctx.beginPath();
+          ctx.moveTo(-6, lado * 8);
+          ctx.lineTo(-16, lado * 22);
+          ctx.lineTo(-6, lado * 20);
+          ctx.lineTo(6, lado * 8);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        });
+
+        // Fuselaje (bezier para la punta)
+        ctx.beginPath();
+        ctx.moveTo(24, 0);
+        ctx.bezierCurveTo(14, -10, 0, -11, -14, -9);
+        ctx.lineTo(-14, 9);
+        ctx.bezierCurveTo(0, 11, 14, 10, 24, 0);
+        ctx.closePath();
+        var cuerpo = ctx.createLinearGradient(0, -10, 0, 10);
+        cuerpo.addColorStop(0, '#f5ede1');
+        cuerpo.addColorStop(1, '#b9c2cf');
+        ctx.fillStyle = cuerpo;
+        ctx.fill();
+        ctx.stroke();
+
+        // Cabina
+        ctx.beginPath();
+        ctx.ellipse(6, 0, 7, 4.5, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#5cc8ff';
+        ctx.fill();
+        ctx.stroke();
+
+        // Franja de color
+        ctx.beginPath();
+        ctx.rect(-12, -2, 10, 4);
+        ctx.fillStyle = '#c1443a';
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      // ---------- Física ----------
+      function actualizar() {
+        // Giro
+        if (teclas['ArrowLeft'] || teclas['a'] || teclas['A']) { nave.angulo -= VELOCIDAD_GIRO; }
+        if (teclas['ArrowRight'] || teclas['d'] || teclas['D']) { nave.angulo += VELOCIDAD_GIRO; }
+
+        // Propulsión
+        nave.propulsando = !!(teclas['ArrowUp'] || teclas['w'] || teclas['W']);
+        if (nave.propulsando) {
+          nave.vx += Math.cos(nave.angulo) * ACELERACION;
+          nave.vy += Math.sin(nave.angulo) * ACELERACION;
+        }
+
+        // Freno
+        if (teclas['ArrowDown'] || teclas['s'] || teclas['S']) {
+          nave.vx *= 0.94;
+          nave.vy *= 0.94;
+        }
+
+        // FRICCIÓN: multiplica la velocidad por un factor menor que 1 cada cuadro
+        nave.vx *= friccion;
+        nave.vy *= friccion;
+
+        // LÍMITE DE VELOCIDAD
+        var velocidad = Math.sqrt(nave.vx * nave.vx + nave.vy * nave.vy);
+        if (velocidad > VELOCIDAD_MAXIMA) {
+          nave.vx = (nave.vx / velocidad) * VELOCIDAD_MAXIMA;
+          nave.vy = (nave.vy / velocidad) * VELOCIDAD_MAXIMA;
+        }
+
+        // Si va casi detenida, se frena del todo (evita deslizarse infinito)
+        if (velocidad < 0.01) { nave.vx = 0; nave.vy = 0; }
+
+        nave.x += nave.vx;
+        nave.y += nave.vy;
+
+        // LÍMITES DEL ESCENARIO: la nave rebota perdiendo energía
+        if (nave.x < nave.radio) {
+          nave.x = nave.radio;
+          nave.vx *= -rebote;
+        } else if (nave.x > canvas.width - nave.radio) {
+          nave.x = canvas.width - nave.radio;
+          nave.vx *= -rebote;
+        }
+        if (nave.y < nave.radio) {
+          nave.y = nave.radio;
+          nave.vy *= -rebote;
+        } else if (nave.y > canvas.height - nave.radio) {
+          nave.y = canvas.height - nave.radio;
+          nave.vy *= -rebote;
+        }
+      }
+
+      function dibujarMarco() {
+        // Marco de límites del escenario
+        ctx.strokeStyle = 'rgba(92, 200, 255, 0.35)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 8]);
+        ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
+        ctx.setLineDash([]);
+      }
+
+      function dibujarHUD() {
+        var velocidad = Math.sqrt(nave.vx * nave.vx + nave.vy * nave.vy);
+        var porcentaje = Math.min(velocidad / VELOCIDAD_MAXIMA, 1);
+
+        ctx.fillStyle = 'rgba(10, 8, 32, 0.6)';
+        ctx.fillRect(14, 14, 170, 46);
+        ctx.fillStyle = '#f5ede1';
+        ctx.font = '12px "Segoe UI", sans-serif';
+        ctx.textBaseline = 'top';
+        ctx.fillText('VELOCIDAD  ' + velocidad.toFixed(2), 24, 22);
+
+        ctx.fillStyle = 'rgba(245,237,225,0.2)';
+        ctx.fillRect(24, 42, 150, 8);
+        ctx.fillStyle = porcentaje > 0.85 ? '#c1443a' : '#5cc8ff';
+        ctx.fillRect(24, 42, 150 * porcentaje, 8);
+      }
+
+      function bucle() {
+        actualizar();
+        dibujarFondo();
+        dibujarMarco();
+        dibujarNave();
+        dibujarHUD();
+        requestAnimationFrame(bucle);
+      }
+
+      // ---------- Eventos ----------
+      window.addEventListener('keydown', function (e) {
+        teclas[e.key] = true;
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].indexOf(e.key) !== -1) {
+          e.preventDefault(); // evita que la página haga scroll
+        }
+      });
+      window.addEventListener('keyup', function (e) { teclas[e.key] = false; });
+
+      var sliderFriccion = document.getElementById('friccion');
+      var sliderRebote = document.getElementById('rebote');
+      sliderFriccion.addEventListener('input', function () {
+        friccion = parseFloat(sliderFriccion.value);
+        document.getElementById('valorFriccion').textContent = friccion.toFixed(3);
+      });
+      sliderRebote.addEventListener('input', function () {
+        rebote = parseFloat(sliderRebote.value);
+        document.getElementById('valorRebote').textContent = rebote.toFixed(2);
+      });
+
+      bucle();
+    </script>
+
+    <footer class="pie">
+      <p>Actividad · Nave con propulsión, fricción, límite de velocidad y rebote en bordes.</p>
+    </footer>
+
+  </body>
+</html>
