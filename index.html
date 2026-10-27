@@ -1,30 +1,27 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animación Dinámica · Menú de actividades</title>
-  <link rel="stylesheet" href="estilos.css">
-</head>
-<body>
-
-  <h1>Animación Dinámica</h1>
-  <img src="img/banner-menu.png" alt="Ilustración de tarjetas apiladas representando actividades, con una marca de verificación">
-  <p>Menú principal del curso. Aquí se irán agregando los links a cada actividad conforme se completen.</p>
-
-  <ul>
-    <li><a href="actividades/a2/index.html">A2 - Página básica con HTML y CSS</a></li>
-    <li><a href="actividades/a3/index.html">A3 - Canvas: dibujo con rectángulos y animación</a></li>
-    <li><a href="actividades/participacion2/reto-canvas.html">Participación 2 - Reto Canvas: logo DVD rebotando</a></li>
-    <li><a href="actividades/golden-globes/index.html">Part 1 - Página Golden Globes 2026</a></li>
-    <li><a href="actividades/rotar-mouse/index.html">Clase 04 - Rotar hacia el mouse (atan2)</a></li>
-    <li><a href="actividades/ondas/index.html">Clase 05 - Onda seno/coseno: posición y escala</a></li>
-    <li><a href="actividades/estrella-rebota/index.html">Estrella rebotando</a></li>
-    <li><a href="actividades/figuras-canvas/index.html">Figuras con Canvas API</a></li>
-    <li><a href="actividades/reloj/index.html">Reloj con tres manecillas</a></li>
-    <li><a href="actividades/paint/index.html">Paint App</a></li>
-    <li><a href="actividades/nave/index.html">Simulación de nave (fricción y límites)</a></li>
-  </ul>
-
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>&lt;model-viewer&gt; template</title>
+    <meta charset="utf-8">
+    <meta name="description" content="&lt;model-viewer&gt; template">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" href="./styles.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <!-- <model-viewer> HTML element -->
+    <model-viewer src="minecraft_-_steve.glb" ar ar-modes="webxr scene-viewer quick-look" camera-controls tone-mapping="neutral" poster="poster.webp" shadow-intensity="1">
+      <div class="progress-bar hide" slot="progress-bar">
+          <div class="update-bar"></div>
+      </div>
+      <button slot="ar-button" id="ar-button">
+          View in your space
+      </button>
+      <div id="ar-prompt">
+          <img src="ar_hand_prompt.png">
+      </div>
+    </model-viewer>  
+    <script src="script.js"></script>
+    <!-- Loads <model-viewer> for browsers: -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.4.0/model-viewer.min.js"></script>
+  </body>
 </html>
